@@ -94,6 +94,8 @@ class NeatoNode:
         r = rospy.Rate(20)
         cmd_rate= self.CMD_RATE
 
+        self.prevRanges = []
+
         while not rospy.is_shutdown():
             # notify if low batt
             #if self.robot.getCharger() < 10:
@@ -163,7 +165,9 @@ class NeatoNode:
             # publish everything
             self.odomBroadcaster.sendTransform((self.x, self.y, 0), (quaternion.x, quaternion.y, quaternion.z,
                                                                      quaternion.w), then, "base_footprint", "odom")
-            self.scanPub.publish(scan)
+            if self.prevRanges != scan.ranges:
+                self.scanPub.publish(scan)
+                self.prevRanges = scan.ranges
             self.odomPub.publish(odom)
             button_enum = ("Soft_Button", "Up_Button", "Start_Button", "Back_Button", "Down_Button")
             sensor_enum = ("Left_Side_Bumper", "Right_Side_Bumper", "Left_Bumper", "Right_Bumper")

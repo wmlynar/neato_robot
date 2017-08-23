@@ -1,21 +1,14 @@
-# intro_to_ros
-Repository of packages and info for the SV-ROS Intro To ROS training series
+# Introduction
 
-This repo will contain the software and documents for the SV-ROS 2015 Intro to Ros training series.
+The contents of this repository have been imported from https://github.com/SV-ROS/intro_to_ros.git
 
-The series involes a set of talks presenting a general introduction to ROS and building ROS Robots.
-
-Reference Robot designs are provided as a guide to getting started.
-
-The first of these is a robot built on the Neato BV80 base and using a Raspberry PI II SBC.
+IT provides software for robot built on the Neato BV80 base and using a Raspberry PI II SBC.
 
 The ROS packages and drivers for this robot can be found in the bv80bot folder(s).
 
 The driver is based on a modified Neato Driver first created by Michael Ferguson.
 
---
-bv80bot
--------
+# bv80bot
 
   The robot is built from a Raspberry PI II SBC and a Neato BV80 robot vacume base.
   
@@ -126,7 +119,32 @@ The map will be saved as two files in the .../neato_2dnav/maps folder, map.yaml,
   
   Change the value of the default argument shown above to one of the indicated choices to change your controler settings/configuration.
   
-    
-  
-  
-  
+# Git Commands used to import the repository
+
+```
+git clone https://github.com/SV-ROS/intro_to_ros.git
+cd intro_to_ros
+git remote rm origin
+cp README.md ..
+git reset --hard 76933da7233cc3e3038be4d8c59f4d15ec903a28
+git filter-branch --subdirectory-filter bv80bot/ -- --all
+cp ../README.md .
+git add README.md
+git commit -m"Added readme"
+cd ..
+
+git clone https://github.com/wmlynar/neato_robot.git
+cd neato_robot
+git rm -r *
+git commit -m"Deleted all files"
+git remote add p2 ../intro_to_ros/
+git pull p2 master
+git remote rm p2
+git push
+cd ..
+```
+Above commands are based on onswers from those threads
+https://stackoverflow.com/questions/1365541/how-to-move-files-from-one-git-repo-to-another-not-a-clone-preserving-history
+https://stackoverflow.com/questions/2982055/detach-many-subdirectories-into-a-new-separate-git-repository
+
+

@@ -37,7 +37,7 @@ import rospy
 import time
 import threading
 
-BASE_WIDTH = 248    # millimeters
+BASE_WIDTH = 252    # millimeters
 MAX_SPEED = 300     # millimeters/second
 
 xv11_analog_sensors = [ "WallSensorInMM",

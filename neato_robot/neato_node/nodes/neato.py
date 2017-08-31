@@ -41,6 +41,7 @@ from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from tf.broadcaster import TransformBroadcaster
+from geometry_msgs.msg import Vector3Stamped
 
 from neato_driver.neato_driver import Botvac
 
@@ -60,6 +61,7 @@ class NeatoNode:
         rospy.Subscriber("cmd_vel", Twist, self.cmdVelCb)
         self.scanPub = rospy.Publisher('base_scan', LaserScan, queue_size=10)
         self.odomPub = rospy.Publisher('odom', Odometry, queue_size=10)
+        self.distPub = rospy.Publisher('dist', Vector3Stamped, queue_size=10)
         self.buttonPub = rospy.Publisher('button', Button, queue_size=10)
         self.sensorPub = rospy.Publisher('sensor', Sensor, queue_size=10)
         self.odomBroadcaster = TransformBroadcaster()
@@ -85,6 +87,8 @@ class NeatoNode:
         scan.range_max = 5.0
 
         odom = Odometry(header=rospy.Header(frame_id="odom"), child_frame_id='base_footprint')
+
+        dist = Vector3Stamped(header=rospy.Header(frame_id="odom"))
 
         button = Button()
         sensor = Sensor()
@@ -155,6 +159,9 @@ class NeatoNode:
             odom.twist.twist.linear.x = dx/dt
             odom.twist.twist.angular.z = dth/dt
 
+            dist.header.stamp = odom.header.stamp
+            dist.vector.x = encoders[0]/1000
+            dist.vector.y = encoders[1]/1000
 
             # sensors
             lsb, rsb, lfb, rfb = self.robot.getDigitalSensors()
@@ -169,7 +176,8 @@ class NeatoNode:
             if self.prevRanges != scan.ranges:
                 self.scanPub.publish(scan)
                 self.prevRanges = scan.ranges
-            self.odomPub.publish(odom)
+                self.odomPub.publish(odom)
+                self.distPub.publish(dist)
             button_enum = ("Soft_Button", "Up_Button", "Start_Button", "Back_Button", "Down_Button")
             sensor_enum = ("Left_Side_Bumper", "Right_Side_Bumper", "Left_Bumper", "Right_Bumper")
             for idx, b in enumerate((btn_soft, btn_scr_up, btn_start, btn_back, btn_scr_down)):
